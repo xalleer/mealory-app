@@ -9,7 +9,7 @@ type AuthState = {
   user: User | null;
   isHydrated: boolean;
 
-  setToken: (token: string) => Promise<void>;
+  setToken: (token: string | null) => Promise<void>;
   setUser: (user: User) => void;
   logout: () => Promise<void>;
   hydrate: () => Promise<void>;

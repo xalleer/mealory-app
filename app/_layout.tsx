@@ -1,9 +1,11 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { queryClient } from "@/lib/query-client";
 import { useAuthStore } from "@/stores/auth.store";
@@ -19,16 +21,12 @@ export default function RootLayout() {
 
     (async () => {
       try {
-        // Clear the token for testing
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
-        console.log('SecureStore token after clear:', token);
         if (!cancelled) {
           setToken(token ?? null);
           setHydrated(true);
         }
       } catch (error) {
-        console.log('SecureStore error:', error);
         if (!cancelled) {
           setToken(null);
           setHydrated(true);
@@ -50,9 +48,13 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }} />
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <BottomSheetModalProvider>
+          <StatusBar style="light" />
+          <Stack screenOptions={{ headerShown: false }} />
+        </BottomSheetModalProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
